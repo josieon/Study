@@ -1,14 +1,14 @@
 package baekjoon;
 import java.util.Scanner;
 
-public class N1008 {
+public class N10998 {
 	public static void main(String[] args) {
 		
 		Scanner sc = new Scanner(System.in);
-		double a = sc.nextDouble();
-		double b = sc.nextDouble();
+		int a = sc.nextInt();
+		int b = sc.nextInt();
 		sc.close();
 		
-		System.out.println(a / b);
+		System.out.println(a * b);
 	}
 }
