@@ -1,7 +1,10 @@
 package baekjoon;
 import java.io.*;
 public class N2941 {
+<<<<<<< HEAD
 
+=======
+>>>>>>> 9f7e77be81303c3249b13498056262664453f4a8
 	public static void main(String[] args) throws Exception{
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 		String str = br.readLine();
@@ -34,5 +37,12 @@ public class N2941 {
 		}
 		System.out.println(cnt);
 	}
+<<<<<<< HEAD
 
 }
+=======
+}
+// 이 문제를 풀면서 2번의 StringIndexOutOfBounds 오류와 5번의 오답이 나왔다.
+// 테스트 케이스 및 알고리즘은 문제 그대로 짜서 다 옳게 나왔으나 생각 못한 예외가 있었던 것 같다.
+// 처음에는 String을 char 배열로 바꾸어서 했으나 그럴 필요 없이 charAt 함수를 호출하면 되는 문제였다.
+>>>>>>> 9f7e77be81303c3249b13498056262664453f4a8
