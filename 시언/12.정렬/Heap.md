@@ -14,11 +14,11 @@
     1. 인덱스순으로 가장 마지막 위치에 이어서 새로운 요소를 삽입
     2. 부모 노드와 삽입 노드의 키 값을 비교하고 서로 교환(sift-up: 상향선별)을 반복
  
-![Heap_add](./Heap_add.jpg)
+![Heap_add](./img/Heap_add.jpg)
 
   - remove
     1. 최댓값인 루트 노드를 삭제(빈자리에는 힙의 마지막 노드를 가져온다.)
     2. 자식 노드와 비교. 자식 노드 중 더 큰 값과 교환.(sift-down: 하향선별)을 반복
   
-![Heap_remove](./Heap_remove.jpg)
+![Heap_remove](./img/Heap_remove.jpg)
       
