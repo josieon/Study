@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<!-- saved from url=(0053)https://www.db-book.com/university-lab-dir/sqljs.html -->
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  
+  <title>sql.js demo: Online SQL interpreter</title>
+  <link rel="stylesheet" href="./sql.js demo_ Online SQL interpreter_files/codemirror.css">
+  <link rel="stylesheet" href="./sql.js demo_ Online SQL interpreter_files/demo.css">
+  <script src="./sql.js demo_ Online SQL interpreter_files/codemirror.js.다운로드"></script>
+
+</head>
+<body>
+
+<h1>Online SQL interpreter</h1>
+<br>
+
+Run queries directly from the text box below; the university database schema and sample data have been preloaded.
+(Note: page may take a few seconds to load initially.).    All query processing is done right in your browser
+using the SQLite database.  Save the database and load it later, if you want your data to persist when you close the browser tab.
+
+<br>
+Click here <a href="https://www.db-book.com/university-lab-dir/sqlite-tips.html"> for tips on using SQLite</a> including SQL syntax variations.
+
+
+<br><br> 
+<main>
+    <label for="commands">Enter SQL commands here</label>
+    <br>
+
+<textarea id="commands" cols="80" style="display: none;"> -- enter SQL commands here after loading your sample database.
+</textarea><div class="CodeMirror cm-s-default   "><div style="overflow: hidden; position: relative; width: 3px; height: 0px; top: 5px; left: 34px;"><textarea autocorrect="off" autocapitalize="off" spellcheck="false" style="position: absolute; padding: 0px; width: 1000px; height: 1em; outline: none;" tabindex="0"></textarea></div><div class="CodeMirror-hscrollbar" style="left: 29px;"><div style="height: 100%; min-height: 1px; width: 0px;"></div></div><div class="CodeMirror-vscrollbar"><div style="min-width: 1px; height: 0px;"></div></div><div class="CodeMirror-scrollbar-filler"></div><div class="CodeMirror-gutter-filler"></div><div class="CodeMirror-scroll" tabindex="-1"><div class="CodeMirror-sizer" style="margin-left: 29px; min-width: 179.8px; min-height: 21px;"><div style="position: relative; top: 0px;"><div class="CodeMirror-lines"><div style="position: relative; outline: none;"><div class="CodeMirror-measure"><div style="width: 50px; height: 50px; overflow-x: scroll;"></div></div><div class="CodeMirror-measure"></div><div style="position: relative; z-index: 1;"></div><div class="CodeMirror-cursors" style=""><div class="CodeMirror-cursor" style="left: 4px; top: 0px; height: 13px;">&nbsp;</div></div><div class="CodeMirror-code"><div style="position: relative;"><div class="CodeMirror-gutter-wrapper" style="position: absolute; left: -29px;"><div class="CodeMirror-linenumber CodeMirror-gutter-elt" style="left: 0px; width: 20px;">1</div></div><pre class=""><span style="padding-right: 0.1px;"><span class="cm-comment">-- enter your commands here</span></span></pre></div></div></div></div></div></div><div style="position: absolute; height: 30px; width: 1px; top: 21px;"></div><div class="CodeMirror-gutters" style="height: 21px;"><div class="CodeMirror-gutter CodeMirror-linenumbers" style="width: 28px;"></div></div></div></div>
+<br>
+
+<button id="execute" class="button">Execute</button>
+<button id="savedb" class="button">Save the db</button>
+<label class="button">Load an SQLite database file: <input type="file" id="dbfile" defaultvalue="univdb-sqlite.db"></label>
+
+<div id="error" class="error" style="height: 0px;"></div>
+
+<pre id="output"><table><thead><tr><th>name</th><th>sql</th></tr></thead><tbody><tr><td>classroom</td><td>CREATE TABLE classroom
+	(building		varchar(15),
+	 room_number		varchar(7),
+	 capacity		numeric(4,0),
+	 primary key (building, room_number)
+	)</td></tr><tr><td>department</td><td>CREATE TABLE department
+	(dept_name		varchar(20), 
+	 building		varchar(15), 
+	 budget		        numeric(12,2) check (budget &gt; 0),
+	 primary key (dept_name)
+	)</td></tr><tr><td>course</td><td>CREATE TABLE course
+	(course_id		varchar(8), 
+	 title			varchar(50), 
+	 dept_name		varchar(20),
+	 credits		numeric(2,0) check (credits &gt; 0),
+	 primary key (course_id),
+	 foreign key (dept_name) references department
+		on delete set null
+	)</td></tr><tr><td>instructor</td><td>CREATE TABLE instructor
+	(ID			varchar(5), 
+	 name			varchar(20) not null, 
+	 dept_name		varchar(20), 
+	 salary			numeric(8,2) check (salary &gt; 29000),
+	 primary key (ID),
+	 foreign key (dept_name) references department
+		on delete set null
+	)</td></tr><tr><td>section</td><td>CREATE TABLE section
+	(course_id		varchar(8), 
+         sec_id			varchar(8),
+	 semester		varchar(6)
+		check (semester in ('Fall', 'Winter', 'Spring', 'Summer')), 
+	 year			numeric(4,0) check (year &gt; 1701 and year &lt; 2100), 
+	 building		varchar(15),
+	 room_number		varchar(7),
+	 time_slot_id		varchar(4),
+	 primary key (course_id, sec_id, semester, year),
+	 foreign key (course_id) references course
+		on delete cascade,
+	 foreign key (building, room_number) references classroom
+		on delete set null
+	)</td></tr><tr><td>teaches</td><td>CREATE TABLE teaches
+	(ID			varchar(5), 
+	 course_id		varchar(8),
+	 sec_id			varchar(8), 
+	 semester		varchar(6),
+	 year			numeric(4,0),
+	 primary key (ID, course_id, sec_id, semester, year),
+	 foreign key (course_id,sec_id, semester, year) references section
+		on delete cascade,
+	 foreign key (ID) references instructor
+		on delete cascade
+	)</td></tr><tr><td>student</td><td>CREATE TABLE student
+	(ID			varchar(5), 
+	 name			varchar(20) not null, 
+	 dept_name		varchar(20), 
+	 tot_cred		numeric(3,0) check (tot_cred &gt;= 0),
+	 primary key (ID),
+	 foreign key (dept_name) references department
+		on delete set null
+	)</td></tr><tr><td>takes</td><td>CREATE TABLE takes
+	(ID			varchar(5), 
+	 course_id		varchar(8),
+	 sec_id			varchar(8), 
+	 semester		varchar(6),
+	 year			numeric(4,0),
+	 grade		        varchar(2),
+	 primary key (ID, course_id, sec_id, semester, year),
+	 foreign key (course_id,sec_id, semester, year) references section
+		on delete cascade,
+	 foreign key (ID) references student
+		on delete cascade
+	)</td></tr><tr><td>advisor</td><td>CREATE TABLE advisor
+	(s_ID			varchar(5),
+	 i_ID			varchar(5),
+	 primary key (s_ID),
+	 foreign key (i_ID) references instructor (ID)
+		on delete set null,
+	 foreign key (s_ID) references student (ID)
+		on delete cascade
+	)</td></tr><tr><td>time_slot</td><td>CREATE TABLE time_slot
+	(time_slot_id		varchar(4),
+	 day			varchar(1),
+	 start_hr		numeric(2) check (start_hr &gt;= 0 and start_hr &lt; 24),
+	 start_min		numeric(2) check (start_min &gt;= 0 and start_min &lt; 60),
+	 end_hr			numeric(2) check (end_hr &gt;= 0 and end_hr &lt; 24),
+	 end_min		numeric(2) check (end_min &gt;= 0 and end_min &lt; 60),
+	 primary key (time_slot_id, day, start_hr, start_min)
+	)</td></tr><tr><td>prereq</td><td>CREATE TABLE prereq
+	(course_id		varchar(8), 
+	 prereq_id		varchar(8),
+	 primary key (course_id, prereq_id),
+	 foreign key (course_id) references course
+		on delete cascade,
+	 foreign key (prereq_id) references course
+	)</td></tr></tbody></table></pre>
+</main>
+
+<script src="./sql.js demo_ Online SQL interpreter_files/sql.js.다운로드"></script>
+
+<footer>
+Original work by kripken (<a href="https://github.com/kripken/sql.js">sql.js</a>).
+C to Javascript compiler by kripken (<a href="https://github.com/kripken/emscripten">emscripten</a>).
+Project now maintained by <a href="https://github.com/lovasoa">lovasoa</a>
+</footer>
+
+<script type="text/javascript" src="./sql.js demo_ Online SQL interpreter_files/gui.js.다운로드"></script>
+
+
+</body></html>
